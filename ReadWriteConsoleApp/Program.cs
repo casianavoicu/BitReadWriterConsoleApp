@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,12 +11,29 @@ namespace ReadWriteConsoleApp
     {
         static void Main(string[] args)
         {
-            // The code provided will print ‘Hello World’ to the console.
-            // Press Ctrl+F5 (or go to Debug > Start Without Debugging) to run your app.
-            Console.WriteLine("Hello World!");
-            Console.ReadKey();
+            
+            Random rand = new Random();
+            long NBR = 0;
+            string filePath = @"E:\FACULTATE\an 4\Sem1_Mine\indrumarPDS.pdf";
+            BitReader bitReader = new BitReader(filePath);
+            FileInfo f = new FileInfo(filePath);
+            long fileSize = f.Length; ;
+            NBR =8 * fileSize ;
+                do
+                {
+                    int nb;
 
-            // Go to http://aka.ms/dotnet-get-started-console to continue learning how to build a console app! 
+                    nb = 4;
+                    if (nb > NBR)
+                    {
+                        nb = (int)NBR;
+                    }
+                    uint value = bitReader.ReadNBits(nb);
+                    // BitWriter.WriteNBits(nb, value);
+                    NBR -= nb;
+                } while (NBR > 0);
+         
+            Console.WriteLine(NBR);
         }
     }
 }
