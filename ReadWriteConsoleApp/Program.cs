@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace ReadWriteConsoleApp
 {
     class Program
@@ -14,26 +15,35 @@ namespace ReadWriteConsoleApp
             
             Random rand = new Random();
             long NBR = 0;
-            string filePath = @"E:\FACULTATE\an 4\Sem1_Mine\indrumarPDS.pdf";
-            BitReader bitReader = new BitReader(filePath);
-            FileInfo f = new FileInfo(filePath);
-            long fileSize = f.Length; ;
+            string filePathInput = @"E:\FACULTATE\an 4\Sem1_Mine\input.txt";
+            string filePathOutput = @"E:\FACULTATE\an 4\Sem1_Mine\output1.txt";
+            var fileSize = new FileInfo(filePathInput).Length * 8;
             NBR =8 * fileSize ;
+            var random = new Random();
+            using (var bitReader = new BitReader(filePathInput))
+            {
+                using (var bitWriter = new BitWriter(filePathOutput))
+                 {
+              
                 do
-                {
+                    {
                     int nb;
 
-                    nb = 4;
+                    nb = rand.Next(0,32);
                     if (nb > NBR)
                     {
                         nb = (int)NBR;
-                    }
+                    }                   
                     uint value = bitReader.ReadNBits(nb);
-                    // BitWriter.WriteNBits(nb, value);
-                    NBR -= nb;
-                } while (NBR > 0);
-         
-            Console.WriteLine(NBR);
+
+                    bitWriter.WriteNBits((int)nb,value);
+                    fileSize -= nb;
+                    Console.WriteLine(value);
+                } while (NBR > 0 );
+            }
+            }
+            
+            
         }
     }
 }

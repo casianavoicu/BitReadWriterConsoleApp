@@ -7,63 +7,68 @@ using System.Threading.Tasks;
 
 namespace ReadWriteConsoleApp
 {
-    public class BitReader
+    public class BitReader :IDisposable
     {
-        private byte BufferReader;
-        private BinaryReader fileContent;
-        private int NumberOfBitsRead;
+        private byte bufferReader;
+        private readonly BinaryReader inputFileContent;
+        
+        private int numberOfBitsRead;
         
 
         public BitReader(string filePath)
         {
-            BufferReader = 0;
-            NumberOfBitsRead = 0;
-            fileContent = new BinaryReader(File.Open(filePath, FileMode.Open), Encoding.UTF8);
-
+            bufferReader = 8;
+            numberOfBitsRead =0;
+            inputFileContent = new BinaryReader(File.OpenRead(filePath), Encoding.UTF8);
+            inputFileContent.BaseStream.Position = 0;
 
         }
 
         public bool IsEmptyBuffer()
         {
-            if (NumberOfBitsRead == 0)
-                return true;
-            return false;
+
+            return numberOfBitsRead == 0;
 
         }
         private UInt32 ReadBit()
         {
-            uint result;
+            uint result=0 ;
             if (IsEmptyBuffer())
             {
-                BufferReader = Convert.ToByte((fileContent.ReadByte()));
-                NumberOfBitsRead = 8;
 
+                    
+                    bufferReader = Convert.ToByte(inputFileContent.ReadByte());
+                    numberOfBitsRead = 8;
+               
             }
-  
-            result = Convert.ToUInt32(BufferReader % 2);
-            BufferReader <<= 1;
-            NumberOfBitsRead--;
+          
+                numberOfBitsRead--;
+         
+            result = Convert.ToUInt32(bufferReader % 2);
+            bufferReader >>= 1;
+           
 
             return result;
         }
         public UInt32 ReadNBits(int no)
         {
-            UInt32 result = 0;
-  
+            uint result = 0;
 
-            for (var i = no - 1; i >= 0; i++)
+           
+            for (var i = no - 1; i >= 0; i--)
             {
 
-                result = result | ReadBit();
-                  
-                   
+               // result <<= 1;
+                result = ReadBit() | result;
+               
             }
+           
             return result;
 
         }
         public void Dispose()
         {
-            fileContent.Dispose();
+            inputFileContent.Dispose();
         }
 
     }
