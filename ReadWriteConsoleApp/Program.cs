@@ -12,38 +12,35 @@ namespace ReadWriteConsoleApp
     {
         static void Main(string[] args)
         {
-            
+
             Random rand = new Random();
             long NBR = 0;
             string filePathInput = @"E:\FACULTATE\an 4\Sem1_Mine\input.txt";
-            string filePathOutput = @"E:\FACULTATE\an 4\Sem1_Mine\output1.txt";
-            var fileSize = new FileInfo(filePathInput).Length * 8;
-            NBR =8 * fileSize ;
+            string filePathOutput = @"E:\FACULTATE\an 4\Sem1_Mine\output3.txt";
+            var fileSize = new FileInfo(filePathInput).Length;
+            NBR = 8 * fileSize;
+            BitReader bitReader = new BitReader(filePathInput);
+            BitWriter bitWriter = new BitWriter(filePathOutput);
             var random = new Random();
-            using (var bitReader = new BitReader(filePathInput))
+
+            do
             {
-                using (var bitWriter = new BitWriter(filePathOutput))
-                 {
-              
-                do
-                    {
-                    int nb;
+                int nb;
 
-                    nb = rand.Next(0,32);
-                    if (nb > NBR)
-                    {
-                        nb = (int)NBR;
-                    }                   
-                    uint value = bitReader.ReadNBits(nb);
+                nb = 8;
+                if (nb > NBR)
+                {
+                    nb = (int)NBR;
+                }
+                int value = bitReader.ReadNBits(nb);
 
-                    bitWriter.WriteNBits((int)nb,value);
-                    fileSize -= nb;
-                    Console.WriteLine(value);
-                } while (NBR > 0 );
-            }
-            }
-            
-            
+                bitWriter.WriteNBits(nb, value);
+                NBR -= nb;
+                Console.WriteLine(value);
+            } while (NBR > 0);
+
         }
+            
+        
     }
 }

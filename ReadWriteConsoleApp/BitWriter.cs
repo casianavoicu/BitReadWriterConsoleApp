@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 using System.IO;
 namespace ReadWriteConsoleApp
 {
-    public class BitWriter : IDisposable
+    public class BitWriter 
     {
-        private readonly BinaryWriter outputFileContent;
+        private FileStream outputFileContent;
         private byte bufferWriter;
         private int numberOfBitsWritten;
 
         public BitWriter(string filePath)
         {
             numberOfBitsWritten = 0;
-            bufferWriter = 0;
-            outputFileContent = new BinaryWriter(new FileStream(filePath,FileMode.Create));
+            
+            outputFileContent = new FileStream(filePath,FileMode.Create,FileAccess.Write);
 
         }
 
@@ -25,37 +25,37 @@ namespace ReadWriteConsoleApp
             return numberOfBitsWritten == 8;
         }
 
-        private void WriteBit(UInt32 value)
+        private void WriteBit(int value)
         {
 
-            bufferWriter <<= 1;
-            bufferWriter |= (byte)(value % 2);
+          
+            bufferWriter = (byte)((int)bufferWriter +(value<<(7-numberOfBitsWritten)));
             numberOfBitsWritten++;
             if (IsBufferFull())
             {
                 numberOfBitsWritten = 0;
-                outputFileContent.Write(bufferWriter);
-                bufferWriter =0;
+                outputFileContent.WriteByte(bufferWriter);
+                bufferWriter = 0;
 
             }
-           
-
+          
+               
+            
         }
 
-        public void WriteNBits( int nr, UInt32 value)
+        public void WriteNBits( int nr, int value)
         {
-            if (nr > 32)
-            {
-                throw new Exception("Numarul de biti care trebuie scris depaseste 32");
-            }
+            int bit;
             for (int i = nr - 1; i >= 0; i--)
             {
-                WriteBit(value >>i);
+                bit = value << (nr - 1 - i);
+                bit = bit >> (nr - 1);
+                bit = bit & 0x01;
+                WriteBit(bit);
+
+
             }
         }
-        public void Dispose()
-        {
-            outputFileContent.Dispose();
-        }
+       
     }
 }
